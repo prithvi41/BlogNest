@@ -6,6 +6,7 @@ const authRouter = require('./route/authrouter');
 
 app.use('/', authRouter);
 
+
 app.listen(process.env.PORT, async (req, res) => {
     console.log(`server running on port ${process.env.PORT}`);
 })
