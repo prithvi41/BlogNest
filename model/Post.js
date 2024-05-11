@@ -40,4 +40,18 @@ async function getPostById(post_id) {
     }
 }
 
-module.exports = { createPost, getRecentPost, getPostById };
+async function updateByPostId(post_id, inputFields, values) {
+    try {
+        const query = `UPDATE POSTS 
+                       SET ${inputFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
+                       WHERE id = $${inputFields.length + 1}`;
+        const result = await client.query(query, values);
+        return result;
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+module.exports = { createPost, getRecentPost, getPostById, updateByPostId };

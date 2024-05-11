@@ -54,4 +54,32 @@ async function postById(req, res) {
     }
 }
 
-module.exports = { newPost, allPost, postById };
+// update a post 
+async function updatePost(req, res) {
+    try {
+        const data = req.body;
+        const post_id = req.params.post_id;
+        const postExist = await postModel.getPostById(post_id);
+        if(postExist.rows.length === 0) {
+            return res.status(http_status_code.NOT_FOUND).send("post not found");
+        }
+        if(postExist && postExist.rows[0].user_id !== req.user.userId) {
+            return res.status(http_status_code.UNAUTHORIZED).send("unauthorized");
+        }
+        const inputFields = [];
+        const values = [];
+        Object.keys(data).forEach((key, index) => {
+            inputFields.push(`${key} = $${index + 1}`);
+            values.push(data[key]);
+        });
+        values.push(post_id);
+        const result = await postModel.updateByPostId(post_id, inputFields, values);
+        return res.status(http_status_code.OK).send("post updated"); 
+    }
+    catch(err) {
+        console.log(err);
+        res.status(http_status_code.INTERNAL_SERVER_ERROR).send("unexpected server error");
+    }
+}
+
+module.exports = { newPost, allPost, postById, updatePost };
