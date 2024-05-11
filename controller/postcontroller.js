@@ -1,4 +1,5 @@
 const postModel = require('../model/Post');
+const userModel = require('../model/User');
 const http_status_code = require('../config/httpstatuscode');
 
 // create a new post
@@ -102,4 +103,31 @@ async function deletePost(req, res) {
     }
 }
 
-module.exports = { newPost, allPost, postById, updatePost, deletePost };
+// filter based on author or topic or both
+async function filterPost(req, res) {
+    try {
+        const data = req.query;
+        if(!data.author || !data.topic) {
+            return res.status(http_status_code.BAD_REQUEST).send("missing filter parameters");
+        }
+        let  user_id, topics;
+        if(data.author) {
+            const userDetails = await userModel.getUserByName(data.author);
+            if(userDetails.rows.length === 0) {
+                return res.status(http_status_code.NOT_FOUND).send("author not found");
+            }
+            user_id = userDetails.rows[0].id;
+        }
+        if(data.topic) {
+            topics = data.topic.split(',').map((key) => key.trim());
+            const result = await postModel.getPostFiltered(user_id, topics);
+            return res.status(http_status_code.OK).send({Response : result.rows});
+        }
+    }
+    catch(err) {
+        console.log(err);
+        return res.status(http_status_code.INTERNAL_SERVER_ERROR).send("unexpected server error");
+    }
+}
+
+module.exports = { newPost, allPost, postById, updatePost, deletePost, filterPost };

@@ -67,4 +67,26 @@ async function deletePostById(post_id) {
     }
 }
 
-module.exports = { createPost, getRecentPost, getPostById, updateByPostId, deletePostById };
+async function getPostFiltered(user_id, topics) {
+    try {
+        const query = `SELECT * FROM POSTS WHERE
+                        ${user_id !== null ? `user_id = $1` : ''}
+                        ${user_id !== null && topics.length > 0 ? `AND` : ''}
+                        ${topics && topics.length > 0 ? topics.map((key, index) => `topic like $${ index + 2 }`).join(' OR '): ''}`;
+        const values = [];
+        if(user_id != null) {
+            values.push(user_id);
+        }
+        if(topics && topics.length > 0) {
+            values.push(...topics.map((key) => `%${key}%`));
+        }
+        const result = await client.query(query, values);
+        return result;
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+module.exports = { createPost, getRecentPost, getPostById, updateByPostId, deletePostById, getPostFiltered };
