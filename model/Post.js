@@ -89,4 +89,71 @@ async function getPostFiltered(user_id, topics) {
     }
 }
 
-module.exports = { createPost, getRecentPost, getPostById, updateByPostId, deletePostById, getPostFiltered };
+async function increaseLikesCount(post_id) {
+    try {
+        const query = `UPDATE POSTS
+                       SET likes_count = COALESCE(likes_count, 0) + 1
+                       WHERE id = $1`
+        const values = [post_id];
+        const result = await client.query(query, values);
+        return result; 
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+async function decreaseLikesCount(post_id) {
+    try {
+        const query = `UPDATE POSTS 
+                       SET likes_count = CASE 
+                                            WHEN likes_count > 0 THEN likes_count - 1
+                                            ELSE 0
+                                        END
+                       WHERE id = $1`;
+        const values = [post_id];
+        const result = await client.query(query, values);
+        return result;
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+async function increaseCommentsCount(post_id) {
+    try {
+        const query = `UPDATE POSTS
+                       SET comments_count = COALESCE(comments_count, 0) + 1
+                       WHERE id = $1`
+        const values = [post_id];
+        const result = await client.query(query, values);
+        return result; 
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+async function decreaseCommentsCount(post_id) {
+    try {
+        const query = `UPDATE POSTS 
+                       SET comments_count = CASE 
+                                            WHEN comments_count > 0 THEN comments_count - 1
+                                            ELSE 0
+                                        END
+                       WHERE id = $1`;
+        const values = [post_id];
+        const result = await client.query(query, values);
+        return result;
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+module.exports = { createPost, getRecentPost, getPostById, updateByPostId, deletePostById, getPostFiltered, increaseLikesCount,
+                    decreaseLikesCount, increaseCommentsCount, decreaseCommentsCount };
