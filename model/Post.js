@@ -54,4 +54,17 @@ async function updateByPostId(post_id, inputFields, values) {
     }
 }
 
-module.exports = { createPost, getRecentPost, getPostById, updateByPostId };
+async function deletePostById(post_id) {
+    try {
+        const query = 'DELETE FROM POSTS WHERE id = $1';
+        const values = [post_id];
+        const result = await client.query(query, values);
+        return result; 
+    }
+    catch(err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+module.exports = { createPost, getRecentPost, getPostById, updateByPostId, deletePostById };

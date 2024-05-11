@@ -82,4 +82,24 @@ async function updatePost(req, res) {
     }
 }
 
-module.exports = { newPost, allPost, postById, updatePost };
+// delete a post by id 
+async function deletePost(req, res) {
+    try {
+        const post_id = req.params.post_id;
+        const postExist = await postModel.getPostById(post_id);
+        if(postExist.rows.length === 0) {
+            return res.status(http_status_code.NOT_FOUND).send("post not found");
+        }
+        if(postExist.rows[0].user_id !== req.user.userId) {
+            return res.status(http_status_code.UNAUTHORIZED).send("unauthorized");
+        }
+        await postModel.deletePostById(post_id);
+        return res.status(http_status_code.OK).send("post deleted");
+    }
+    catch(err) {
+        console.log(err);
+        res.status(http_status_code.INTERNAL_SERVER_ERROR).send("unexpected server error");
+    }
+}
+
+module.exports = { newPost, allPost, postById, updatePost, deletePost };

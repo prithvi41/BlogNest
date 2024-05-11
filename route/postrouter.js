@@ -7,5 +7,6 @@ router.post('/new', authenticate, postController.newPost);
 router.get('/allposts', postController.allPost);
 router.get('/:post_id', postController.postById);
 router.patch('/:post_id', authenticate, postController.updatePost);
+router.delete('/:post_id', authenticate, postController.deletePost);
 
 module.exports = router;
