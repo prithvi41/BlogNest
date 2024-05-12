@@ -1,12 +1,11 @@
 # BlogNest Backend REST APIs
 ## Description
  - A Blog App where authors can create and read blogs on different topics.
- - APIs include to add/register a user, CRUD operations for post management, filter post by author or topics.
- - User authorization by JWT
+ - APIs include to add/register a user, CRUD operations for post management, filter post by author or topics. login/register functionality with password hashing, user authorization using JWT.
 ## Local installation 
 #### Prerequisites
   - Ensure you have node.js, npm, and Postgres(for local pg servers) installed on your local machine.
-###$ Clone the Repository 
+#### Clone the Repository 
 ```bash
 $ git clone https://github.com/prithvi41/BlogNest.git
 ```
